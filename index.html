@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deal Radar — Reselling Assistant</title>
+<style>
+:root{--bg:#0b1020;--panel:#121a2e;--panel2:#18233b;--line:#2b3854;--text:#eef3ff;--muted:#a7b4ce;--green:#56e39b;--yellow:#ffd166;--red:#ff7b88;--blue:#7db6ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172747 0,#0b1020 55%);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:24px clamp(16px,4vw,48px) 18px;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#56e39b,#7db6ff);display:grid;place-items:center;color:#07111f;font-size:23px;font-weight:900}
+h1{font-size:clamp(22px,3vw,31px);margin:0;letter-spacing:-.7px} .sub{color:var(--muted);font-size:13px;margin-top:3px}
+.wrap{max-width:1400px;margin:auto;padding:22px clamp(12px,3vw,36px) 44px}.notice{border:1px solid #735e2c;background:#302a1c;color:#ffe5a3;padding:12px 14px;border-radius:12px;margin-bottom:18px;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}.stat,.panel{background:rgba(18,26,46,.94);border:1px solid var(--line);border-radius:16px}.stat{padding:16px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{display:block;font-size:25px;margin-top:5px}
+.layout{display:grid;grid-template-columns:310px minmax(0,1fr);gap:16px;align-items:start}.panel{padding:17px;margin-bottom:16px}.panel h2{font-size:16px;margin:0 0 13px}.panel h3{font-size:14px;margin:16px 0 9px}
+label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}input,select,textarea{width:100%;border:1px solid var(--line);background:#0d1527;color:var(--text);border-radius:9px;padding:10px;font:inherit;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--blue)}.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+button,.filebtn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:10px;padding:10px 12px;font:inherit;font-weight:650;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px}button:hover,.filebtn:hover{filter:brightness(1.15)}button.primary{background:var(--green);color:#07111f;border-color:transparent}button.ghost{background:transparent}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.folderlist{display:grid;gap:7px}.folder{display:flex;justify-content:space-between;align-items:center;text-align:left;width:100%;padding:10px 11px}.folder.active{border-color:var(--green);background:#19352f}.pill{font-size:11px;color:var(--muted);border:1px solid var(--line);padding:3px 7px;border-radius:30px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px}.toolbar .search{flex:1;min-width:180px}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.item{background:#111b30;border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}.itemtop{display:flex;justify-content:space-between;gap:8px;align-items:start}.item h3{margin:0;font-size:15px;overflow-wrap:anywhere}.meta{font-size:12px;color:var(--muted);margin-top:5px}.tag{display:inline-flex;align-items:center;border-radius:7px;padding:4px 7px;font-size:10px;font-weight:850;letter-spacing:.3px;white-space:nowrap}.deal{background:#153e31;color:#7dffba}.medium{background:#453a1d;color:#ffe08a}.bad{background:#48242d;color:#ff9ba6}.unknown{background:#28364d;color:#c7d8f4}.numbers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:13px 0}.num{background:#0b1425;border-radius:9px;padding:9px}.num span{font-size:10px;color:var(--muted);display:block}.num strong{font-size:15px;display:block;margin-top:4px;overflow-wrap:anywhere}.itemfoot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:10px;margin-top:8px}.itemfoot a{color:var(--blue);font-size:12px;overflow-wrap:anywhere}.empty{padding:36px 18px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}.small{font-size:12px;color:var(--muted)}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:10px}.sectionhead h2{margin:0}.hidden{display:none!important}.fineprint{font-size:11px;color:var(--muted);margin-top:12px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.cards{grid-template-columns:1fr}}@media(max-width:480px){.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:21px}.panel{padding:13px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">↗</div><div><h1>Deal Radar</h1><div class="sub">Reselling assistant · margini, rischio e occasioni</div></div></div><div class="actions" style="margin:0"><button id="exportBtn">Esporta CSV</button><button id="backupBtn">Backup JSON</button><label class="filebtn" style="margin:0">Importa JSON<input id="importFile" type="file" accept=".json,application/json" hidden></label></div></header>
+<main class="wrap">
+<div class="notice"><strong>Modalità trasparente:</strong> questa app non legge Vinted in automatico e non inventa vendite concluse. Inserisci annunci e comparabili verificati, oppure importa dati raccolti in modo autorizzato. I risultati sono stime, non garanzie. I dati vengono salvati in questo browser.</div>
+<div id="appStatus" class="small" role="status" aria-live="polite" style="margin:-6px 0 14px;color:var(--green)">App caricata correttamente. Puoi creare una cartella.</div>
+<section class="stats">
+<div class="stat"><span>Annunci analizzati</span><strong id="statCount">0</strong></div><div class="stat"><span>Occasioni verificate</span><strong id="statDeals">0</strong></div><div class="stat"><span>Profitto stimato medio</span><strong id="statProfit">—</strong></div><div class="stat"><span>Da verificare</span><strong id="statUnknown">0</strong></div>
+</section>
+<div class="layout">
+<aside>
+<div class="panel"><h2>Cartelle di ricerca</h2><div id="folderList" class="folderlist"></div><h3>Nuova cartella</h3><label>Nome</label><input id="folderName" placeholder="Es. Nintendo, sneakers…"><label>Parole chiave (separate da virgola)</label><input id="folderKeywords" placeholder="console, nintendo, bundle"><label>Categoria</label><select id="folderCategory"><option value="">Tutte</option><option>Elettronica</option><option>Abbigliamento</option><option>Scarpe</option><option>Collezionismo</option><option>Casa</option><option>Altro</option></select><div class="two"><div><label>Prezzo minimo €</label><input id="folderMin" type="number" min="0" value="0"></div><div><label>Prezzo massimo €</label><input id="folderMax" type="number" min="0" value="100"></div></div><button class="primary" id="addFolder" style="width:100%;margin-top:12px">+ Crea cartella</button><p class="fineprint">Le cartelle filtrano gli annunci inseriti/importati. Non eseguono ricerche live su Vinted.</p></div>
+<div class="panel"><h2>Parametri di calcolo</h2><label>Imballaggio medio (€)</label><input id="packing" type="number" min="0" step=".1" value="0.50"><label>Costi extra per articolo (€)</label><input id="extra" type="number" min="0" step=".1" value="0"><label>Margine minimo per “AFFARE” (€)</label><input id="minProfit" type="number" min="0" step="1" value="10"><label>ROI minimo (%)</label><input id="minRoi" type="number" min="0" step="1" value="30"><label>Comparabili venduti minimi</label><select id="minComps"><option value="3">3 (consigliato)</option><option value="5">5</option><option value="8">8</option></select><button id="recalc" style="width:100%;margin-top:12px">Ricalcola tutto</button><p class="fineprint">I costi effettivi dipendono da come vendi, dalle tariffe applicabili e dalla spedizione. Modifica i parametri in base al tuo caso.</p></div>
+</aside>
+<section>
+<div class="panel"><div class="sectionhead"><h2>Inserisci un annuncio</h2><span class="pill">Analisi locale</span></div>
+<form id="listingForm">
+<div class="two"><div><label>Titolo</label><input id="title" required placeholder="Es. Nintendo 3DS XL"></div><div><label>Cartella</label><select id="listingFolder"></select></div></div>
+<div class="two"><div><label>Categoria</label><select id="category"><option>Elettronica</option><option>Abbigliamento</option><option>Scarpe</option><option>Collezionismo</option><option>Casa</option><option>Altro</option></select></div><div><label>Condizione</label><select id="condition"><option>Ottima</option><option>Buona</option><option>Da sistemare</option><option>Nuovo con etichette</option></select></div></div>
+<div class="two"><div><label>Prezzo richiesto (€)</label><input id="buy" type="number" min="0" step=".01" required placeholder="20"></div><div><label>Rivendita stimata (€)</label><input id="resale" type="number" min="0" step=".01" placeholder="45"></div></div>
+<div class="two"><div><label>Spedizione/acquisto a tuo carico (€)</label><input id="shipping" type="number" min="0" step=".01" value="0"></div><div><label>Commissioni vendita stimate (€)</label><input id="fees" type="number" min="0" step=".01" value="0"></div></div>
+<div class="two"><div><label>Comparabili di vendita verificati</label><input id="comps" type="number" min="0" step="1" value="0"></div><div><label>Confidenza dati</label><select id="confidence"><option value="Bassa">Bassa</option><option value="Media">Media</option><option value="Alta">Alta</option></select></div></div>
+<label>Link annuncio (facoltativo)</label><input id="url" type="url" placeholder="https://…"><label>Note / difetti / cosa hai verificato</label><input id="notes" placeholder="Testato, accessori inclusi, difetti…">
+<div class="actions"><button class="primary" type="submit">+ Analizza e salva</button><button type="button" id="demoBtn">Carica esempi dimostrativi</button><button type="reset" class="ghost">Pulisci</button></div></form></div>
+<div class="panel"><div class="toolbar"><input id="search" class="search" placeholder="Cerca titolo, categoria o note…"><select id="verdictFilter" style="max-width:190px"><option value="">Tutti i verdetti</option><option>AFFARE</option><option>MEDIOCRE</option><option>NON AFFARE</option><option>DATI INSUFFICIENTI</option></select><button id="clearBtn" class="ghost">Svuota annunci</button></div><div class="sectionhead" style="margin-bottom:12px"><h2 id="resultsTitle">Annunci</h2><span id="resultCount" class="pill">0 risultati</span></div><div id="listingGrid" class="cards"></div></div>
+<div class="panel"><h2>Come leggere il verdetto</h2><div class="small"><p><span class="tag deal">AFFARE</span> dati sufficienti, profitto e ROI sopra le soglie impostate.</p><p><span class="tag medium">MEDIOCRE</span> possibile margine, ma sotto le soglie oppure rischio non trascurabile.</p><p><span class="tag bad">NON AFFARE</span> profitto stimato nullo/negativo o costo troppo alto rispetto alla rivendita.</p><p><span class="tag unknown">DATI INSUFFICIENTI</span> pochi comparabili, prezzo di rivendita assente o confidenza bassa: non prendere il verdetto come consiglio d'acquisto.</p></div></div>
+</section></div></main>
+<script>
+const $=id=>document.getElementById(id);
+const money=n=>Number.isFinite(n)?new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(n):'—';
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+let folders=[], listings=[], activeFolder='all';
+function load(){
+  try {
+    folders = JSON.parse(localStorage.getItem('dr_folders') || '[]');
+    listings = JSON.parse(localStorage.getItem('dr_listings') || '[]');
+  } catch (err) {
+    folders = [];
+    listings = [];
+    storageAvailable = false;
+    showStorageNotice();
+  }
+  if (!folders.length) folders = [{id:'all',name:'Tutti gli annunci',keywords:'',category:'',min:0,max:99999}];
+}
+let storageAvailable = true;
+function save(){
+  try {
+    localStorage.setItem('dr_folders', JSON.stringify(folders));
+    localStorage.setItem('dr_listings', JSON.stringify(listings));
+    storageAvailable = true;
+  } catch (err) {
+    storageAvailable = false;
+    showStorageNotice();
+  }
+}
+function showStorageNotice(){
+  let n = document.getElementById('storageNotice');
+  if (!n) {
+    n = document.createElement('div');
+    n.id = 'storageNotice';
+    n.className = 'notice';
+    n.style.borderColor = '#8a5a2b';
+    n.textContent = 'Attenzione: il browser non consente di salvare i dati in modo permanente in questa visualizzazione. Le modifiche restano disponibili finché la pagina è aperta. Apri il sito pubblicato in Safari/Chrome per una gestione più affidabile.';
+    const main = document.querySelector('main.wrap');
+    if (main) main.prepend(n);
+  }
+}
+function settings(){return {packing:+$('packing').value||0,extra:+$('extra').value||0,minProfit:+$('minProfit').value||0,minRoi:+$('minRoi').value||0,minComps:+$('minComps').value||3}}
+function calc(x){let s=settings(),buy=+x.buy||0,resale=+x.resale||0,shipping=+x.shipping||0,fees=+x.fees||0;let total=buy+shipping+s.packing+s.extra+fees,profit=resale-total,roi=total>0?profit/total*100:-100;let verdict='DATI INSUFFICIENTI',reason='Servono dati di rivendita e comparabili affidabili.';
+if(resale>0&&(+x.comps||0)>=s.minComps&&x.confidence!=='Bassa'){if(profit<=0) {verdict='NON AFFARE';reason='Il margine stimato è nullo o negativo.'}else if(profit>=s.minProfit&&roi>=s.minRoi&&x.confidence==='Alta'){verdict='AFFARE';reason='Soglie di margine e ROI superate con confidenza alta.'}else {verdict='MEDIOCRE';reason='Margine positivo, ma non supera tutte le soglie oppure la confidenza è media.'}}
+return {total,profit,roi,verdict,reason}}
+function renderFolders(){ $('folderList').innerHTML='';folders.forEach(f=>{let b=document.createElement('button');b.className='folder '+(activeFolder===f.id?'active':'');b.innerHTML='<span>'+esc(f.name)+'</span><span class="pill">'+listings.filter(x=>f.id==='all'||x.folderId===f.id).length+'</span>';b.onclick=()=>{activeFolder=f.id;render()};$('folderList').appendChild(b)});$('listingFolder').innerHTML=folders.filter(f=>f.id!=='all').map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join('');if(!$('listingFolder').options.length)$('listingFolder').innerHTML='<option value="all">Tutti gli annunci</option>';}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function visible(){let q=$('search').value.toLowerCase(),v=$('verdictFilter').value;return listings.filter(x=>{let f=folders.find(f=>f.id===x.folderId);let c=calc(x);return(activeFolder==='all'||x.folderId===activeFolder)&&(!q||[x.title,x.category,x.notes].join(' ').toLowerCase().includes(q))&&(!v||c.verdict===v)&&(!f||f.id==='all'||((!f.category||x.category===f.category)&&(+x.buy||0)>=f.min&&(+x.buy||0)<=f.max&&(!f.keywords||f.keywords.split(',').some(k=>x.title.toLowerCase().includes(k.trim().toLowerCase())))))})}
+function render(){renderFolders();let arr=visible();$('listingGrid').innerHTML='';$('resultCount').textContent=arr.length+' risultati';$('resultsTitle').textContent=activeFolder==='all'?'Annunci':'Annunci · '+(folders.find(f=>f.id===activeFolder)?.name||'Cartella');let vals=listings.map(x=>calc(x));$('statCount').textContent=listings.length;$('statDeals').textContent=vals.filter(x=>x.verdict==='AFFARE').length;$('statUnknown').textContent=vals.filter(x=>x.verdict==='DATI INSUFFICIENTI').length;let profits=vals.filter(x=>x.verdict!=='DATI INSUFFICIENTI').map(x=>x.profit);$('statProfit').textContent=profits.length?money(profits.reduce((a,b)=>a+b,0)/profits.length):'—';
+if(!arr.length){$('listingGrid').innerHTML='<div class="empty" style="grid-column:1/-1">Nessun annuncio qui. Inseriscine uno o carica gli esempi.</div>';return}
+arr.forEach(x=>{let c=calc(x),cl=c.verdict==='AFFARE'?'deal':c.verdict==='MEDIOCRE'?'medium':c.verdict==='NON AFFARE'?'bad':'unknown',el=document.createElement('article');el.className='item';el.innerHTML=`<div class="itemtop"><div><h3>${esc(x.title)}</h3><div class="meta">${esc(x.category)} · ${esc(x.condition)} · ${esc(folders.find(f=>f.id===x.folderId)?.name||'Senza cartella')}</div></div><span class="tag ${cl}">${c.verdict}</span></div><div class="numbers"><div class="num"><span>Acquisto + costi</span><strong>${money(c.total)}</strong></div><div class="num"><span>Rivendita stimata</span><strong>${money(+x.resale||NaN)}</strong></div><div class="num"><span>Profitto stimato</span><strong style="color:${c.profit>0?'var(--green)':'var(--red)'}">${money(c.profit)}</strong></div></div><div class="meta">ROI stimato: <b>${Number.isFinite(c.roi)?c.roi.toFixed(1)+'%':'—'}</b> · Comparabili: <b>${+x.comps||0}</b> · Confidenza: <b>${esc(x.confidence)}</b></div><p class="small">${esc(c.reason)} ${x.notes?'Note: '+esc(x.notes):''}</p><div class="itemfoot"><span class="small">Prezzo annuncio: ${money(+x.buy||0)}</span><div class="actions" style="margin:0"><button data-edit="${x.id}">Modifica</button><button data-del="${x.id}" class="ghost">Elimina</button>${x.url?`<a href="${esc(x.url)}" target="_blank" rel="noopener">Apri annuncio ↗</a>`:''}</div></div>`;$('listingGrid').appendChild(el)});
+document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{listings=listings.filter(x=>x.id!==b.dataset.del);save();render()});document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>edit(b.dataset.edit));}
+function edit(id){let x=listings.find(x=>x.id===id);if(!x)return;let title=prompt('Titolo',x.title);if(title===null)return;let buy=prompt('Prezzo acquisto (€)',x.buy);if(buy===null)return;let resale=prompt('Rivendita stimata (€)',x.resale);if(resale===null)return;let comps=prompt('Numero comparabili verificati',x.comps);if(comps===null)return;Object.assign(x,{title,buy:+buy,resale:+resale,comps:+comps});save();render()}
+$('addFolder').addEventListener('click', () => {
+  try {
+    const name = $('folderName').value.trim();
+    if (!name) { alert('Inserisci il nome della cartella'); $('folderName').focus(); return; }
+    const min = Math.max(0, Number($('folderMin').value) || 0);
+    const maxInput = $('folderMax').value;
+    const max = maxInput === '' ? 99999 : Math.max(0, Number(maxInput) || 0);
+    if (max < min) { alert('Il prezzo massimo deve essere maggiore o uguale al minimo.'); return; }
+    const f = {id:uid(), name, keywords:$('folderKeywords').value.trim(), category:$('folderCategory').value, min, max};
+    folders.push(f);
+    activeFolder = f.id;
+    $('folderName').value = '';
+    $('folderKeywords').value = '';
+    save();
+    render();
+    const notice = document.getElementById('folderSuccess');
+    if (notice) notice.remove();
+    const msg = document.createElement('div');
+    msg.id = 'folderSuccess';
+    msg.className = 'small';
+    msg.style.color = 'var(--green)';
+    msg.style.marginTop = '8px';
+    msg.textContent = 'Cartella "' + name + '" creata.';
+    const status = document.getElementById('appStatus');
+    if (status) status.textContent = 'Cartella "' + name + '" creata correttamente.';
+    $('folderList').after(msg);
+  } catch (err) {
+    alert('Non sono riuscito a creare la cartella. Prova ad aprire il file in un browser normale. Dettaglio: ' + (err && err.message ? err.message : 'errore sconosciuto'));
+  }
+});
+$('listingForm').onsubmit=e=>{e.preventDefault();let x={id:uid(),title:$('title').value.trim(),folderId:$('listingFolder').value||'all',category:$('category').value,condition:$('condition').value,buy:+$('buy').value,resale:$('resale').value===''?0:+$('resale').value,shipping:+$('shipping').value||0,fees:+$('fees').value||0,comps:+$('comps').value||0,confidence:$('confidence').value,url:$('url').value.trim(),notes:$('notes').value.trim(),created:new Date().toISOString()};listings.unshift(x);save();e.target.reset();$('shipping').value=0;$('fees').value=0;$('comps').value=0;render()};
+['search','verdictFilter'].forEach(id=>$(id).addEventListener('input',render));['packing','extra','minProfit','minRoi','minComps'].forEach(id=>$(id).addEventListener('change',render));$('recalc').onclick=render;
+$('demoBtn').onclick=()=>{if(listings.some(x=>x.demo)&&!confirm('Gli esempi sono già presenti. Aggiungerne altri?'))return;let f=folders.find(f=>f.id!=='all')||{id:'all'};listings.unshift({id:uid(),title:'Console portatile — esempio dimostrativo',folderId:f.id,category:'Elettronica',condition:'Buona',buy:25,resale:55,shipping:2,fees:3,comps:5,confidence:'Alta',url:'',notes:'DATI INVENTATI PER MOSTRARE IL CALCOLO. Verificare prezzo e funzionamento.',demo:true},{id:uid(),title:'Felpa brand — esempio dimostrativo',folderId:f.id,category:'Abbigliamento',condition:'Ottima',buy:18,resale:28,shipping:1,fees:2,comps:1,confidence:'Bassa',url:'',notes:'Esempio con dati insufficienti.',demo:true});save();render()};
+$('clearBtn').onclick=()=>{if(confirm('Eliminare tutti gli annunci salvati in questo browser?')){listings=[];save();render()}};
+$('exportBtn').onclick=()=>{let rows=[['titolo','categoria','condizione','acquisto','rivendita_stimata','spedizione','commissioni','comparabili','confidenza','verdetto','profitto_stimato','url','note'],...listings.map(x=>{let c=calc(x);return [x.title,x.category,x.condition,x.buy,x.resale,x.shipping,x.fees,x.comps,x.confidence,c.verdict,c.profit,x.url,x.notes]})];let csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');download('deal-radar.csv','text/csv;charset=utf-8',csv)};
+$('backupBtn').onclick=()=>download('deal-radar-backup.json','application/json',JSON.stringify({folders,listings,settings:{packing:$('packing').value,extra:$('extra').value,minProfit:$('minProfit').value,minRoi:$('minRoi').value,minComps:$('minComps').value}},null,2));
+function download(name,type,data){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click();URL.revokeObjectURL(a.href)}
+$('importFile').onchange=async e=>{let file=e.target.files[0];if(!file)return;try{let d=JSON.parse(await file.text());if(!Array.isArray(d.listings)||!Array.isArray(d.folders))throw Error('Formato non valido');if(confirm('Sostituire i dati locali con il backup importato?')){folders=d.folders;listings=d.listings;save();render()}}catch(err){alert('File non valido o illeggibile.')}e.target.value=''};
+load();render();
+</script></body></html>
